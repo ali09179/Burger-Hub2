@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Burger Hub — Fresh, Juicy Burgers Made Daily</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       DESIGN TOKENS & RESET
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --flame:    #E8320A;
+      --amber:    #F97316;
+      --gold:     #FACC15;
+      --cream:    #FFF8ED;
+      --charcoal: #1A1208;
+      --bark:     #3B2007;
+      --smoke:    #F4ECD8;
+      --mist:     #FEF3C7;
+      --white:    #FFFFFF;
+
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-serif:   'Fraunces', serif;
+      --font-body:    'DM Sans', sans-serif;
+
+      --radius: 16px;
+      --radius-lg: 28px;
+      --shadow: 0 8px 40px rgba(26,18,8,.12);
+      --shadow-lg: 0 20px 80px rgba(232,50,10,.18);
+      --transition: .35s cubic-bezier(.4,0,.2,1);
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body  { background: var(--cream); color: var(--charcoal); font-family: var(--font-body); overflow-x: hidden; }
+    img   { display: block; max-width: 100%; }
+    a     { text-decoration: none; color: inherit; }
+    ul    { list-style: none; }
+
+    /* ============================================================
+       UTILITY
+    ============================================================ */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1rem, 5vw, 3rem); }
+    .tag {
+      display: inline-block; font-family: var(--font-body); font-size: .75rem;
+      font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--flame); background: rgba(232,50,10,.08);
+      padding: .35em 1em; border-radius: 99px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-family: var(--font-body); font-weight: 500; font-size: 1rem;
+      padding: .85em 2em; border-radius: 99px; border: none; cursor: pointer;
+      transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+    }
+    .btn-primary {
+      background: var(--flame); color: var(--white);
+      box-shadow: 0 4px 24px rgba(232,50,10,.35);
+    }
+    .btn-primary:hover {
+      background: #C82A06;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 40px rgba(232,50,10,.45);
+    }
+    .btn-outline {
+      background: transparent; color: var(--charcoal);
+      border: 2px solid var(--charcoal);
+    }
+    .btn-outline:hover { background: var(--charcoal); color: var(--cream); transform: translateY(-2px); }
+    .btn-gold {
+      background: var(--gold); color: var(--charcoal);
+      box-shadow: 0 4px 20px rgba(250,204,21,.45);
+    }
+    .btn-gold:hover { background: #EAB308; transform: translateY(-3px); }
+
+    .section-heading {
+      font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: .95; letter-spacing: .01em; color: var(--charcoal);
+    }
+    .section-sub {
+      font-family: var(--font-serif); font-style: italic;
+      font-size: clamp(1rem, 2vw, 1.2rem); color: #6B4C2A; line-height: 1.6;
+      max-width: 540px;
+    }
+
+    /* Fade-up animation */
+    .reveal { opacity: 0; transform: translateY(36px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ============================================================
+       NAV
+    ============================================================ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem clamp(1rem, 5vw, 3rem);
+      transition: background var(--transition), backdrop-filter var(--transition), box-shadow var(--transition);
+    }
+    nav.scrolled {
+      background: rgba(255,248,237,.92); backdrop-filter: blur(16px);
+      box-shadow: 0 2px 24px rgba(26,18,8,.08);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: .6rem;
+      font-family: var(--font-display); font-size: 1.9rem; color: var(--charcoal);
+      letter-spacing: .04em;
+    }
+    .nav-logo .dot { color: var(--flame); }
+    .nav-logo .logo-icon {
+      width: 38px; height: 38px; background: var(--flame);
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 1.1rem;
+    }
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
+    .nav-links a {
+      font-size: .9rem; font-weight: 500; color: var(--charcoal);
+      position: relative; padding-bottom: 2px;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 2px; background: var(--flame);
+      transition: width var(--transition);
+    }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-order { display: flex; align-items: center; gap: 1rem; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--charcoal); border-radius: 2px; transition: var(--transition); }
+    .mobile-menu {
+      display: none; position: fixed; inset: 0; z-index: 999;
+      background: var(--cream); flex-direction: column;
+      align-items: center; justify-content: center; gap: 2.5rem;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-family: var(--font-display); font-size: 2.5rem; letter-spacing: .05em; }
+    .mobile-close { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 2rem; cursor: pointer; background: none; border: none; color: var(--charcoal); }
+
+    @media (max-width: 768px) {
+      .nav-links, .nav-order .btn { display: none; }
+      .hamburger { display: flex; }
+    }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    #hero {
+      min-height: 100svh;
+      background: radial-gradient(ellipse 80% 60% at 60% 40%, #FEF3C7 0%, #FFF8ED 55%, #F4ECD8 100%);
+      display: flex; align-items: center; padding-top: 90px;
+      position: relative; overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; top: -10%; right: -5%; width: 55vw; height: 55vw; max-width: 700px;
+      background: radial-gradient(circle, rgba(249,115,22,.18) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .hero-dots {
+      position: absolute; left: 0; bottom: 0; width: 220px; height: 220px;
+      background-image: radial-gradient(circle, rgba(232,50,10,.18) 1.5px, transparent 1.5px);
+      background-size: 22px 22px; pointer-events: none;
+    }
+    .hero-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 4rem; width: 100%;
+    }
+    .hero-text { position: relative; z-index: 2; }
+    .hero-eyebrow { margin-bottom: 1.2rem; }
+    .hero-headline {
+      font-family: var(--font-display); font-size: clamp(4rem, 9vw, 8.5rem);
+      line-height: .88; letter-spacing: .02em; margin-bottom: 1.5rem;
+    }
+    .hero-headline .hl { color: var(--flame); display: block; }
+    .hero-desc {
+      font-family: var(--font-serif); font-style: italic;
+      font-size: clamp(1rem, 2vw, 1.25rem); color: #6B4C2A;
+      line-height: 1.65; max-width: 420px; margin-bottom: 2.4rem;
+    }
+    .hero-cta { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+    .hero-stat-row {
+      display: flex; gap: 2.5rem; margin-top: 3rem; padding-top: 2rem;
+      border-top: 1px solid rgba(59,32,7,.12);
+    }
+    .hero-stat-num {
+      font-family: var(--font-display); font-size: 2.5rem; line-height: 1;
+      color: var(--flame);
+    }
+    .hero-stat-lbl { font-size: .8rem; color: #6B4C2A; margin-top: .25rem; letter-spacing: .06em; text-transform: uppercase; }
+
+    /* Burger image */
+    .hero-img-wrap {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-plate {
+      width: clamp(300px, 45vw, 560px); height: clamp(300px, 45vw, 560px);
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 38%, #FACC15 0%, #F97316 55%, #E8320A 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 30px 80px rgba(232,50,10,.35);
+      animation: float 5s ease-in-out infinite;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero-plate img { width: 115%; transform: translateY(-8%); object-fit: cover; }
+    .hero-badge {
+      position: absolute; top: 12%; right: -4%;
+      background: var(--charcoal); color: var(--gold);
+      font-family: var(--font-display); font-size: 1rem;
+      padding: .8em 1.2em; border-radius: var(--radius);
+      letter-spacing: .1em; box-shadow: var(--shadow);
+      animation: float 5s ease-in-out infinite reverse;
+      white-space: nowrap;
+    }
+    .hero-badge-2 {
+      position: absolute; bottom: 14%; left: -6%;
+      background: var(--white); color: var(--charcoal);
+      font-family: var(--font-body); font-size: .85rem; font-weight: 500;
+      padding: .8em 1.4em; border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      animation: float 6s ease-in-out 1s infinite;
+      white-space: nowrap;
+    }
+    .hero-badge-2 span { color: var(--flame); font-weight: 700; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-16px); }
+    }
+
+    @media (max-width: 860px) {
+      .hero-inner { grid-template-columns: 1fr; text-align: center; }
+      .hero-desc { margin: 0 auto 2rem; }
+      .hero-cta { justify-content: center; }
+      .hero-stat-row { justify-content: center; }
+      .hero-img-wrap { order: -1; }
+      .hero-plate { width: 280px; height: 280px; }
+      .hero-badge { top: 5%; right: 0; }
+      .hero-badge-2 { bottom: 5%; left: 0; }
+    }
+
+    /* ============================================================
+       TICKER STRIP
+    ============================================================ */
+    .ticker {
+      background: var(--flame); color: var(--white);
+      padding: .85rem 0; overflow: hidden; position: relative;
+    }
+    .ticker-inner {
+      display: flex; gap: 4rem; width: max-content;
+      animation: ticker 28s linear infinite;
+    }
+    .ticker-item {
+      font-family: var(--font-display); font-size: 1.1rem; letter-spacing: .15em;
+      white-space: nowrap; display: flex; align-items: center; gap: 1.5rem;
+    }
+    .ticker-item::after { content: '🔥'; font-size: .9rem; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ============================================================
+       ABOUT
+    ============================================================ */
+    #about { padding: clamp(4rem, 10vw, 8rem) 0; }
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+    }
+    .about-img-wrap { position: relative; }
+    .about-main-img {
+      width: 100%; aspect-ratio: 4/5; object-fit: cover;
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
+    }
+    .about-inset {
+      position: absolute; bottom: -2rem; right: -2rem;
+      width: 48%; aspect-ratio: 1; object-fit: cover;
+      border-radius: var(--radius); border: 6px solid var(--cream);
+      box-shadow: var(--shadow);
+    }
+    .about-blob {
+      position: absolute; top: -1.5rem; left: -1.5rem;
+      width: 80px; height: 80px; background: var(--gold);
+      border-radius: 40% 60% 60% 40%; z-index: -1;
+    }
+    .about-text { display: flex; flex-direction: column; gap: 1.5rem; }
+    .about-text .section-heading { margin-bottom: .25rem; }
+    .about-feat {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: .5rem;
+    }
+    .about-feat-item {
+      background: var(--smoke); border-radius: var(--radius); padding: 1.2rem;
+      display: flex; flex-direction: column; gap: .4rem;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .about-feat-item:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .about-feat-icon { font-size: 1.6rem; }
+    .about-feat-title { font-weight: 600; font-size: .95rem; }
+    .about-feat-desc  { font-size: .82rem; color: #6B4C2A; line-height: 1.5; }
+
+    @media (max-width: 860px) {
+      .about-grid { grid-template-columns: 1fr; }
+      .about-inset { display: none; }
+    }
+
+    /* ============================================================
+       MENU
+    ============================================================ */
+    #menu { padding: clamp(4rem, 10vw, 8rem) 0; background: var(--charcoal); }
+    .menu-header { text-align: center; margin-bottom: 4rem; }
+    .menu-header .section-heading { color: var(--white); }
+    .menu-header .section-sub { color: rgba(255,248,237,.65); margin: .8rem auto 0; }
+    .menu-tabs {
+      display: flex; gap: .75rem; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 3rem;
+    }
+    .menu-tab {
+      font-family: var(--font-body); font-size: .88rem; font-weight: 500;
+      padding: .55em 1.5em; border-radius: 99px; border: 1.5px solid rgba(255,248,237,.2);
+      color: rgba(255,248,237,.7); background: transparent; cursor: pointer;
+      transition: var(--transition);
+    }
+    .menu-tab.active, .menu-tab:hover {
+      background: var(--flame); border-color: var(--flame); color: var(--white);
+    }
+    .menu-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.8rem;
+    }
+    .menu-card {
+      background: rgba(255,248,237,.05); border: 1px solid rgba(255,248,237,.08);
+      border-radius: var(--radius-lg); overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+      cursor: pointer;
+    }
+    .menu-card:hover {
+      transform: translateY(-8px); border-color: rgba(232,50,10,.4);
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+    .menu-card-img {
+      height: 220px; overflow: hidden; position: relative;
+    }
+    .menu-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .55s ease; }
+    .menu-card:hover .menu-card-img img { transform: scale(1.08); }
+    .menu-card-badge {
+      position: absolute; top: 1rem; left: 1rem;
+      background: var(--flame); color: var(--white);
+      font-size: .7rem; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; padding: .3em .85em; border-radius: 99px;
+    }
+    .menu-card-body { padding: 1.5rem; }
+    .menu-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: .6rem; }
+    .menu-card-name { font-family: var(--font-display); font-size: 1.6rem; color: var(--white); line-height: 1; }
+    .menu-card-price { font-family: var(--font-display); font-size: 1.5rem; color: var(--gold); }
+    .menu-card-desc { font-size: .88rem; color: rgba(255,248,237,.55); line-height: 1.6; }
+    .menu-card-footer { margin-top: 1.2rem; display: flex; align-items: center; justify-content: space-between; }
+    .menu-card-cals { font-size: .78rem; color: rgba(255,248,237,.4); }
+    .menu-add-btn {
+      width: 36px; height: 36px; border-radius: 50%; background: var(--flame);
+      border: none; color: var(--white); font-size: 1.3rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform var(--transition), background var(--transition);
+    }
+    .menu-add-btn:hover { background: var(--amber); transform: rotate(90deg) scale(1.1); }
+
+    /* ============================================================
+       SPECIALS
+    ============================================================ */
+    #specials { padding: clamp(4rem, 10vw, 8rem) 0; }
+    .specials-header { margin-bottom: 3.5rem; }
+    .specials-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+    }
+    .special-card {
+      border-radius: var(--radius-lg); padding: 2.2rem;
+      position: relative; overflow: hidden;
+      transition: transform var(--transition);
+    }
+    .special-card:hover { transform: translateY(-6px); }
+    .special-card:nth-child(1) { background: linear-gradient(135deg, #E8320A 0%, #C82A06 100%); color: var(--white); grid-row: span 2; }
+    .special-card:nth-child(2) { background: var(--charcoal); color: var(--white); }
+    .special-card:nth-child(3) { background: var(--gold); color: var(--charcoal); }
+    .special-card:nth-child(4) { background: var(--smoke); color: var(--charcoal); }
+    .special-bg-text {
+      position: absolute; right: -1rem; bottom: -2rem;
+      font-family: var(--font-display); font-size: 8rem; opacity: .08;
+      line-height: 1; pointer-events: none; white-space: nowrap;
+    }
+    .special-emoji { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+    .special-offer-tag {
+      font-size: .72rem; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; opacity: .7; margin-bottom: .8rem;
+    }
+    .special-title { font-family: var(--font-display); font-size: 2.2rem; line-height: 1; margin-bottom: .8rem; }
+    .special-desc { font-size: .9rem; line-height: 1.65; opacity: .75; margin-bottom: 1.5rem; }
+    .special-price-row { display: flex; align-items: baseline; gap: .5rem; margin-bottom: 1.5rem; }
+    .special-price { font-family: var(--font-display); font-size: 2.5rem; }
+    .special-original { font-size: 1rem; text-decoration: line-through; opacity: .5; }
+
+    @media (max-width: 900px) {
+      .specials-grid { grid-template-columns: 1fr 1fr; }
+      .special-card:nth-child(1) { grid-row: auto; }
+    }
+    @media (max-width: 580px) {
+      .specials-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ============================================================
+       REVIEWS
+    ============================================================ */
+    #reviews { padding: clamp(4rem, 10vw, 8rem) 0; background: var(--smoke); }
+    .reviews-header { text-align: center; margin-bottom: 3.5rem; }
+    .reviews-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;
+    }
+    .review-card {
+      background: var(--white); border-radius: var(--radius-lg); padding: 2rem;
+      box-shadow: 0 4px 24px rgba(26,18,8,.06);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .review-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+    .review-stars { color: var(--gold); font-size: 1.1rem; letter-spacing: .05em; margin-bottom: .8rem; }
+    .review-text {
+      font-family: var(--font-serif); font-style: italic;
+      font-size: 1rem; line-height: 1.65; color: #3B2007; margin-bottom: 1.5rem;
+    }
+    .review-text::before { content: '\201C'; font-size: 2.5rem; color: var(--flame); line-height: 0; vertical-align: -.6em; margin-right: .15rem; }
+    .review-author { display: flex; align-items: center; gap: .9rem; }
+    .review-avatar {
+      width: 44px; height: 44px; border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--smoke);
+    }
+    .review-name { font-weight: 600; font-size: .9rem; }
+    .review-date { font-size: .78rem; color: #6B4C2A; }
+    .reviews-overall {
+      margin-top: 3rem; background: var(--charcoal); border-radius: var(--radius-lg);
+      padding: 2.5rem; display: flex; align-items: center; gap: 3rem; flex-wrap: wrap;
+    }
+    .reviews-score { font-family: var(--font-display); font-size: 5rem; color: var(--gold); line-height: 1; }
+    .reviews-score-sub { color: rgba(255,248,237,.5); font-size: .9rem; margin-top: .3rem; }
+    .reviews-breakdown { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: .6rem; }
+    .bar-row { display: flex; align-items: center; gap: .8rem; }
+    .bar-lbl { color: rgba(255,248,237,.6); font-size: .8rem; width: 30px; text-align: right; }
+    .bar-track { flex: 1; height: 6px; background: rgba(255,255,255,.1); border-radius: 99px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--gold); border-radius: 99px; transition: width 1s ease; }
+
+    /* ============================================================
+       ORDER SECTION
+    ============================================================ */
+    #order {
+      padding: clamp(4rem, 10vw, 7rem) 0;
+      background: linear-gradient(135deg, var(--flame) 0%, var(--amber) 50%, var(--gold) 100%);
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .order-bg-text {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+      font-family: var(--font-display); font-size: clamp(6rem, 20vw, 18rem);
+      color: rgba(255,255,255,.06); white-space: nowrap; pointer-events: none;
+      letter-spacing: .05em;
+    }
+    .order-content { position: relative; z-index: 2; }
+    .order-content .section-heading { color: var(--white); }
+    .order-content p {
+      color: rgba(255,255,255,.85); font-size: 1.15rem; margin: 1rem auto 2.5rem; max-width: 500px;
+    }
+    .order-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-white {
+      background: var(--white); color: var(--flame);
+      box-shadow: 0 8px 30px rgba(0,0,0,.15);
+    }
+    .btn-white:hover { background: var(--cream); transform: translateY(-3px); }
+    .order-apps { display: flex; gap: 1.5rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
+    .order-app-badge {
+      background: rgba(0,0,0,.25); color: var(--white);
+      padding: .6em 1.4em; border-radius: 99px; font-size: .85rem; font-weight: 500;
+      display: flex; align-items: center; gap: .4rem;
+      backdrop-filter: blur(6px);
+    }
+
+    /* ============================================================
+       CONTACT
+    ============================================================ */
+    #contact { padding: clamp(4rem, 10vw, 8rem) 0; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .contact-info { display: flex; flex-direction: column; gap: 2rem; }
+    .contact-item { display: flex; gap: 1.2rem; align-items: flex-start; }
+    .contact-icon {
+      width: 52px; height: 52px; flex-shrink: 0;
+      background: rgba(232,50,10,.1); border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+    .contact-item-text h4 { font-weight: 600; margin-bottom: .25rem; }
+    .contact-item-text p, .contact-item-text a { font-size: .95rem; color: #6B4C2A; line-height: 1.55; }
+    .contact-item-text a:hover { color: var(--flame); }
+    .contact-hours { background: var(--smoke); border-radius: var(--radius-lg); padding: 1.8rem; }
+    .contact-hours h4 { font-weight: 600; margin-bottom: 1rem; }
+    .hours-row { display: flex; justify-content: space-between; padding: .5rem 0; border-bottom: 1px solid rgba(59,32,7,.08); font-size: .9rem; }
+    .hours-row:last-child { border-bottom: none; }
+    .hours-row .day { color: #6B4C2A; }
+    .map-wrap {
+      border-radius: var(--radius-lg); overflow: hidden;
+      box-shadow: var(--shadow-lg); height: 420px;
+    }
+    .map-wrap iframe { width: 100%; height: 100%; border: none; }
+
+    @media (max-width: 860px) { .contact-grid { grid-template-columns: 1fr; } }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer { background: var(--charcoal); color: rgba(255,248,237,.7); }
+    .footer-top {
+      padding: 4rem clamp(1rem,5vw,3rem) 3rem;
+      display: grid; grid-template-columns: 1.5fr repeat(3, 1fr); gap: 3rem;
+    }
+    .footer-brand .nav-logo { margin-bottom: 1rem; }
+    .footer-brand p { font-size: .88rem; line-height: 1.7; max-width: 260px; }
+    .footer-col h5 { color: var(--white); font-size: .85rem; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 1.2rem; }
+    .footer-col ul { display: flex; flex-direction: column; gap: .65rem; }
+    .footer-col ul li a { font-size: .9rem; transition: color var(--transition); }
+    .footer-col ul li a:hover { color: var(--flame); }
+    .social-links { display: flex; gap: .75rem; margin-top: 1.5rem; }
+    .social-link {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(255,248,237,.08); display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: background var(--transition), transform var(--transition);
+    }
+    .social-link:hover { background: var(--flame); transform: translateY(-3px); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,248,237,.08);
+      padding: 1.5rem clamp(1rem,5vw,3rem);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: gap;
+      font-size: .82rem; gap: 1rem;
+    }
+
+    @media (max-width: 760px) {
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .footer-top { grid-template-columns: 1fr; }
+    }
+
+    /* ============================================================
+       SCROLL-TO-TOP
+    ============================================================ */
+    #scrollTop {
+      position: fixed; right: 1.5rem; bottom: 2rem; z-index: 900;
+      width: 46px; height: 46px; border-radius: 50%;
+      background: var(--flame); color: var(--white); border: none;
+      font-size: 1.2rem; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(232,50,10,.4);
+      opacity: 0; pointer-events: none;
+      transition: opacity var(--transition), transform var(--transition);
+      display: flex; align-items: center; justify-content: center;
+    }
+    #scrollTop.visible { opacity: 1; pointer-events: auto; }
+    #scrollTop:hover { transform: translateY(-3px); }
+
+    /* ============================================================
+       BURGER IMAGE PLACEHOLDERS (SVG emoji replacements)
+    ============================================================ */
+    .burger-svg {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+      font-size: 7rem; background: inherit;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAV
+============================================================ -->
+<nav id="mainNav">
+  <div class="nav-logo">
+    <div class="logo-icon">🍔</div>
+    Burger<span class="dot">.</span>Hub
+  </div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#specials">Specials</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-order">
+    <a href="#order" class="btn btn-primary" style="padding:.65em 1.5em; font-size:.9rem;">Order Now</a>
+  </div>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMenu()">✕</button>
+  <a href="#about" onclick="toggleMenu()">About</a>
+  <a href="#menu" onclick="toggleMenu()">Menu</a>
+  <a href="#specials" onclick="toggleMenu()">Specials</a>
+  <a href="#reviews" onclick="toggleMenu()">Reviews</a>
+  <a href="#contact" onclick="toggleMenu()">Contact</a>
+  <a href="#order" class="btn btn-primary" onclick="toggleMenu()">Order Now</a>
+</div>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-dots"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-text reveal">
+        <div class="hero-eyebrow"><span class="tag">🔥 Crafted Since 2012</span></div>
+        <h1 class="hero-headline">
+          Fresh,<br>
+          <span class="hl">Juicy</span>
+          Burgers<br>Made Daily
+        </h1>
+        <p class="hero-desc">
+          Hand-packed patties, locally sourced ingredients, and bold flavors that
+          keep you coming back. Every bite tells a story of craft and passion.
+        </p>
+        <div class="hero-cta">
+          <a href="#order" class="btn btn-primary" style="font-size:1.1rem; padding:.9em 2.2em;">
+            🛒 Order Online
+          </a>
+          <a href="#menu" class="btn btn-outline">View Menu</a>
+        </div>
+        <div class="hero-stat-row">
+          <div>
+            <div class="hero-stat-num">50+</div>
+            <div class="hero-stat-lbl">Menu Items</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">200K</div>
+            <div class="hero-stat-lbl">Happy Customers</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">4.9★</div>
+            <div class="hero-stat-lbl">Average Rating</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-img-wrap reveal" style="transition-delay:.2s">
+        <div class="hero-plate">
+          <!-- Large burger emoji in a styled circle -->
+          <div style="font-size:clamp(9rem,18vw,16rem); line-height:1; filter: drop-shadow(0 12px 30px rgba(0,0,0,.4));">🍔</div>
+        </div>
+        <div class="hero-badge">🏆 BEST BURGER 2024</div>
+        <div class="hero-badge-2">⏱ Ready in <span>15 mins</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TICKER
+============================================================ -->
+<div class="ticker">
+  <div class="ticker-inner" id="tickerInner">
+    <div class="ticker-item">CLASSIC SMASH BURGER</div>
+    <div class="ticker-item">DOUBLE TROUBLE</div>
+    <div class="ticker-item">CRISPY CHICKEN DELUXE</div>
+    <div class="ticker-item">TRUFFLE MUSHROOM</div>
+    <div class="ticker-item">BBQ BACON STACK</div>
+    <div class="ticker-item">VEGGIE CRUNCH</div>
+    <div class="ticker-item">HUB SIGNATURE</div>
+    <div class="ticker-item">SPICY JALAPEÑO</div>
+    <!-- dupe for seamless loop -->
+    <div class="ticker-item">CLASSIC SMASH BURGER</div>
+    <div class="ticker-item">DOUBLE TROUBLE</div>
+    <div class="ticker-item">CRISPY CHICKEN DELUXE</div>
+    <div class="ticker-item">TRUFFLE MUSHROOM</div>
+    <div class="ticker-item">BBQ BACON STACK</div>
+    <div class="ticker-item">VEGGIE CRUNCH</div>
+    <div class="ticker-item">HUB SIGNATURE</div>
+    <div class="ticker-item">SPICY JALAPEÑO</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ABOUT
+============================================================ -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-img-wrap reveal">
+        <div class="about-blob"></div>
+        <!-- Photo collage with emoji placeholders -->
+        <div style="width:100%; aspect-ratio:4/5; border-radius:28px; overflow:hidden; background:linear-gradient(145deg,#FACC15,#F97316,#E8320A); box-shadow:0 20px 80px rgba(232,50,10,.25); display:flex; align-items:center; justify-content:center; font-size:clamp(6rem,14vw,12rem);">
+          🍔
+        </div>
+        <div style="position:absolute; bottom:-1.5rem; right:-1.5rem; width:45%; aspect-ratio:1; border-radius:16px; border:6px solid #FFF8ED; background:linear-gradient(135deg,#1A1208,#3B2007); display:flex; align-items:center; justify-content:center; font-size:3.5rem; box-shadow:0 8px 40px rgba(26,18,8,.18);">
+          👨‍🍳
+        </div>
+      </div>
+
+      <div class="about-text reveal" style="transition-delay:.15s">
+        <span class="tag">Who We Are</span>
+        <h2 class="section-heading">Passion on a<br>Bun Since 2012</h2>
+        <p class="section-sub">
+          What started as a single food truck has grown into the city's most-loved burger destination. We believe great burgers begin with great ingredients — local farms, fresh produce, and a chef's love for bold flavor.
+        </p>
+        <p style="color:#6B4C2A; font-size:.95rem; line-height:1.7;">
+          Every patty is hand-formed, every bun is baked fresh each morning, and every sauce is made from scratch. We don't cut corners because we know you can taste the difference.
+        </p>
+        <div class="about-feat">
+          <div class="about-feat-item">
+            <div class="about-feat-icon">🌿</div>
+            <div class="about-feat-title">Locally Sourced</div>
+            <div class="about-feat-desc">Fresh produce from farms within 50 miles</div>
+          </div>
+          <div class="about-feat-item">
+            <div class="about-feat-icon">🔥</div>
+            <div class="about-feat-title">Flame Grilled</div>
+            <div class="about-feat-desc">Char-grilled for that perfect smoky flavor</div>
+          </div>
+          <div class="about-feat-item">
+            <div class="about-feat-icon">🫙</div>
+            <div class="about-feat-title">Secret Sauces</div>
+            <div class="about-feat-desc">House-made recipes passed down in the family</div>
+          </div>
+          <div class="about-feat-item">
+            <div class="about-feat-icon">⚡</div>
+            <div class="about-feat-title">Always Fresh</div>
+            <div class="about-feat-desc">Never frozen, always made-to-order</div>
+          </div>
+        </div>
+        <a href="#menu" class="btn btn-primary" style="margin-top:1rem;">Explore Our Menu →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     MENU
+============================================================ -->
+<section id="menu">
+  <div class="container">
+    <div class="menu-header reveal">
+      <span class="tag" style="background:rgba(250,204,21,.15); color:var(--gold);">What We Serve</span>
+      <h2 class="section-heading" style="margin-top:.8rem;">Our Signature<br>Burgers</h2>
+      <p class="section-sub">
+        Every burger is a masterpiece. Browse our full menu below.
+      </p>
+    </div>
+
+    <div class="menu-tabs reveal">
+      <button class="menu-tab active" onclick="filterMenu(this,'all')">All</button>
+      <button class="menu-tab" onclick="filterMenu(this,'beef')">🥩 Beef</button>
+      <button class="menu-tab" onclick="filterMenu(this,'chicken')">🍗 Chicken</button>
+      <button class="menu-tab" onclick="filterMenu(this,'veggie')">🥦 Veggie</button>
+      <button class="menu-tab" onclick="filterMenu(this,'special')">⭐ Specials</button>
+    </div>
+
+    <div class="menu-grid reveal" id="menuGrid">
+
+      <!-- 1 -->
+      <div class="menu-card" data-cat="beef special">
+        <div class="menu-card-img">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#E8320A,#F97316);display:flex;align-items:center;justify-content:center;font-size:5rem;">🍔</div>
+          <span class="menu-card-badge">⭐ BEST SELLER</span>
+        </div>
+        <div class="menu-card-body">
+          <div class="menu-card-top">
+            <div class="menu-card-name">Hub Classic</div>
+            <div class="menu-card-price">$12.99</div>
+          </div>
+          <p class="menu-card-desc">200g beef patty, aged cheddar, caramelized onions, Hub's secret sauce, brioche bun.</p>
+          <div class="menu-card-footer">
+            <span class="menu-card-cals">620 kcal</span>
+            <button class="menu-add-btn" onclick="addToCart(this)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="menu-card" data-cat="beef">
+        <div class="menu-card-img">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#1A1208,#3B2007);display:flex;align-items:center;justify-content:center;font-size:5rem;">🍔</div>
+          <span class="menu-card-badge" style="background:var(--charcoal);">🔥 SPICY</span>
+        </div>
+        <div class="menu-card-body">
+          <div class="menu-card-top">
+            <div class="menu-card-name">Double Trouble</div>
+            <div class="menu-card-price">$16.99</div>
+          </div>
+          <p class="menu-card-desc">Two smashed 150g patties, American cheese, pickled jalapeños, chipotle mayo, toasted sesame bun.</p>
+          <div class="menu-card-footer">
+            <span class="menu-card-cals">980 kcal</span>
+            <button class="menu-add-btn" onclick="addToCart(this)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="menu-card" data-cat="chicken">
+        <div class="menu-card-img">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#FACC15,#F97316);display:flex;align-items:center;justify-content:center;font-size:5rem;">🍗</div>
+          <span class="menu-card-badge" style="background:#D97706;">🍗 CHICKEN</span>
+        </div>
+        <div class="menu-card-body">
+          <div class="menu-card-top">
+            <div class="menu-card-name">Crispy Deluxe</div>
+            <div class="menu-card-price">$13.49</div>
+          </div>
+          <p class="menu-card-desc">Buttermilk fried chicken breast, pickles, coleslaw, honey mustard, milk-soft potato bun.</p>
+          <div class="menu-card-footer">
+            <span class="menu-card-cals">740 kcal</span>
+            <button class="menu-add-btn" onclick="addToCart(this)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="menu-card" data-cat="beef special">
+        <div class="menu-card-img">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#6B4C2A,#3B2007);display:flex;align-items:center;justify-content:center;font-size:5rem;">🍄</div>
+          <span class="menu-card-badge" style="background:#6B4C2A;">🍄 PREMIUM</span>
+        </div>
+        <div class="menu-card-body">
+          <div class="menu-card-top">
+            <div class="menu-card-name">Truffle Shroom</div>
+            <div class="menu-card-price">$18.49</div>
+          </div>
+          <p class="menu-card-desc">Wagyu beef, sautéed mushrooms, truffle aioli, gruyère, arugula, artisan sourdough bun.</p>
+          <div class="menu-card-footer">
+            <span class="menu-card-cals">810 kcal</span>
+            <button class="menu-add-btn" onclick="addToCart(this)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="menu-card" data-cat="veggie">
+        <div class="menu-card-img">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#4ADE80,#16A34A);display:flex;align-items:center;justify-content:center;font-size:5rem;">🥦</div>
+          <span class="menu-card-badge" style="background:#16A34A;">🌿 VEGGIE</span>
+        </div>
+        <div class="menu-card-body">
+          <div class="menu-card-top">
+            <div class="menu-card-name">Garden Crunch</div>
+            <div class="menu-card-price">$11.99</div>
+          </div>
+          <p class="menu-card-desc">Black bean & quinoa patty, avocado, roasted peppers, chipotle hummus, whole wheat bun.</p>
+          <div class="menu-card-footer">
+            <span class="menu-card-cals">520 kcal</span>
+            <button class="menu-add-btn" onclick="addToCart(this)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="menu-card" data-cat="beef">
+        <div class="menu-card-img">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#E8320A,#1A1208);display:flex;align-items:center;justify-content:center;font-size:5rem;">🥓</div>
+          <span class="menu-card-badge">🥓 BACON</span>
+        </div>
+        <div class="menu-card-body">
+          <div class="menu-card-top">
+            <div class="menu-card-name">BBQ Bacon Stack</div>
+            <div class="menu-card-price">$15.49</div>
+          </div>
+          <p class="menu-card-desc">Beef patty, crispy streaky bacon, smoked BBQ sauce, fried onion rings, smoky gouda.</p>
+          <div class="menu-card-footer">
+            <span class="menu-card-cals">890 kcal</span>
+            <button class="menu-add-btn" onclick="addToCart(this)">+</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /menu-grid -->
+  </div>
+</section>
+
+<!-- ============================================================
+     SPECIALS
+============================================================ -->
+<section id="specials">
+  <div class="container">
+    <div class="specials-header reveal">
+      <span class="tag">Limited Time</span>
+      <h2 class="section-heading" style="margin-top:.8rem;">Special<br>Offers</h2>
+    </div>
+
+    <div class="specials-grid reveal">
+
+      <div class="special-card">
+        <div class="special-bg-text">50%</div>
+        <span class="special-emoji">🎉</span>
+        <div class="special-offer-tag">Weekend Deal</div>
+        <div class="special-title">Buy 2 Get 1 Free</div>
+        <p class="special-desc">Order any two burgers this weekend and get a third one on the house. Pick any burger from our full menu!</p>
+        <div class="special-price-row">
+          <span class="special-price">FREE</span>
+          <span class="special-original">$12.99</span>
+        </div>
+        <a href="#order" class="btn btn-white" style="font-size:.9rem;">Grab the Deal →</a>
+      </div>
+
+      <div class="special-card">
+        <div class="special-bg-text">MEAL</div>
+        <span class="special-emoji">🍟</span>
+        <div class="special-offer-tag">Combo Offer</div>
+        <div class="special-title">Burger + Fries + Shake</div>
+        <p class="special-desc">The ultimate meal deal — any burger, large fries, and a milkshake of your choice.</p>
+        <div class="special-price-row">
+          <span class="special-price">$19.99</span>
+          <span class="special-original">$27</span>
+        </div>
+        <a href="#order" class="btn btn-primary" style="font-size:.9rem;">Order Combo</a>
+      </div>
+
+      <div class="special-card">
+        <div class="special-bg-text">HH</div>
+        <span class="special-emoji">⏰</span>
+        <div class="special-offer-tag">Happy Hour</div>
+        <div class="special-title">3PM – 6PM Daily</div>
+        <p class="special-desc">All classic burgers at 30% off during happy hour, every single day of the week.</p>
+        <div class="special-price-row">
+          <span class="special-price">30% OFF</span>
+        </div>
+        <a href="#order" class="btn btn-outline btn-charcoal" style="font-size:.9rem; border-color:var(--charcoal);">Learn More</a>
+      </div>
+
+      <div class="special-card">
+        <div class="special-bg-text">👨‍👩‍👧</div>
+        <span class="special-emoji">👨‍👩‍👧</span>
+        <div class="special-offer-tag">Family Pack</div>
+        <div class="special-title">Feed the Whole Crew</div>
+        <p class="special-desc">4 classic burgers, 4 large fries, 4 drinks. Perfect for a family lunch or movie night.</p>
+        <div class="special-price-row">
+          <span class="special-price">$49.99</span>
+          <span class="special-original">$70</span>
+        </div>
+        <a href="#order" class="btn btn-primary" style="font-size:.9rem;">Order Family Pack</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     REVIEWS
+============================================================ -->
+<section id="reviews">
+  <div class="container">
+    <div class="reviews-header reveal">
+      <span class="tag">What They Say</span>
+      <h2 class="section-heading" style="margin-top:.8rem;">Customer<br>Reviews</h2>
+      <p class="section-sub">Thousands of happy customers can't be wrong. Here's what they think.</p>
+    </div>
+
+    <div class="reviews-grid reveal">
+
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Absolutely the best burger I've had in years. The Hub Classic is something else entirely — that secret sauce is genuinely addictive.</p>
+        <div class="review-author">
+          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#E8320A,#FACC15);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;">👩</div>
+          <div>
+            <div class="review-name">Sarah Mitchell</div>
+            <div class="review-date">2 weeks ago · Google</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Ordered the Truffle Shroom and my jaw dropped. Premium ingredients, cooked perfectly. Already planning my next visit.</p>
+        <div class="review-author">
+          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#3B2007,#F97316);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;">👨</div>
+          <div>
+            <div class="review-name">James Okafor</div>
+            <div class="review-date">1 month ago · Yelp</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Fast delivery, hot food, and the double cheeseburger was stacked beautifully. The family pack deal is unbeatable value.</p>
+        <div class="review-author">
+          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FACC15,#F97316);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;">👩</div>
+          <div>
+            <div class="review-name">Priya Kapoor</div>
+            <div class="review-date">3 weeks ago · TripAdvisor</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="reviews-overall reveal">
+      <div>
+        <div class="reviews-score">4.9</div>
+        <div style="color:var(--gold);font-size:1.2rem;margin:.2rem 0;">★★★★★</div>
+        <div class="reviews-score-sub">Based on 2,400+ reviews</div>
+      </div>
+      <div class="reviews-breakdown">
+        <div class="bar-row"><span class="bar-lbl" style="color:rgba(255,248,237,.5);">5★</span><div class="bar-track"><div class="bar-fill" style="width:92%;"></div></div><span style="color:rgba(255,248,237,.4);font-size:.8rem;">92%</span></div>
+        <div class="bar-row"><span class="bar-lbl" style="color:rgba(255,248,237,.5);">4★</span><div class="bar-track"><div class="bar-fill" style="width:6%;"></div></div><span style="color:rgba(255,248,237,.4);font-size:.8rem;">6%</span></div>
+        <div class="bar-row"><span class="bar-lbl" style="color:rgba(255,248,237,.5);">3★</span><div class="bar-track"><div class="bar-fill" style="width:1%;background:var(--amber);"></div></div><span style="color:rgba(255,248,237,.4);font-size:.8rem;">1%</span></div>
+        <div class="bar-row"><span class="bar-lbl" style="color:rgba(255,248,237,.5);">2★</span><div class="bar-track"><div class="bar-fill" style="width:1%;background:var(--amber);"></div></div><span style="color:rgba(255,248,237,.4);font-size:.8rem;">1%</span></div>
+      </div>
+      <div>
+        <p style="color:rgba(255,248,237,.6); font-size:.9rem; max-width:220px; line-height:1.65;">
+          Rated #1 Burger Restaurant in the city three years running.
+        </p>
+        <a href="#order" class="btn btn-gold" style="margin-top:1.2rem;">Order & Judge Yourself</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     ORDER
+============================================================ -->
+<section id="order">
+  <div class="order-bg-text">ORDER NOW</div>
+  <div class="container">
+    <div class="order-content reveal">
+      <span class="tag" style="background:rgba(255,255,255,.2);color:var(--white);">Online Ordering</span>
+      <h2 class="section-heading" style="margin-top:.8rem; color:var(--white);">Ready to Eat?<br>Let's Go.</h2>
+      <p>Skip the queue. Order online and have your burger at your door in under 30 minutes.</p>
+      <div class="order-btns">
+        <a href="tel:03188218597" class="btn btn-white" style="font-size:1.05rem;">🛒 Order Online</a>
+        <a href="tel:03188218597" class="btn" style="background:rgba(255,255,255,.15);color:var(--white);backdrop-filter:blur(6px);">📞 Call to Order</a>
+      </div>
+      <div class="order-apps">
+        <div class="order-app-badge">🟢 Available on DoorDash</div>
+        <div class="order-app-badge">🔴 Available on Uber Eats</div>
+        <div class="order-app-badge">🟠 Available on Grubhub</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CONTACT
+============================================================ -->
+<section id="contact">
+  <div class="container">
+    <div style="margin-bottom:3rem;">
+      <span class="tag reveal">Get in Touch</span>
+      <h2 class="section-heading reveal" style="margin-top:.8rem;">Find Us &<br>Say Hello</h2>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="contact-item reveal">
+          <div class="contact-icon">📍</div>
+          <div class="contact-item-text">
+            <h4>Our Location</h4>
+            <p>247 Flame Street, Food District<br>New York, NY 10001, USA</p>
+          </div>
+        </div>
+        <div class="contact-item reveal">
+          <div class="contact-icon">📞</div>
+          <div class="contact-item-text">
+            <h4>Phone</h4>
+            <a href="tel:03188218597">03188218597</a>
+          </div>
+        </div>
+        <div class="contact-item reveal">
+          <div class="contact-icon">✉️</div>
+          <div class="contact-item-text">
+            <h4>Email</h4>
+            <a href="mailto:businesemail179@gmail.com">businesemail179@gmail.com</a>
+          </div>
+        </div>
+
+        <div class="contact-hours reveal">
+          <h4>Opening Hours</h4>
+          <div class="hours-row"><span class="day">Monday – Thursday</span><span>11:00 AM – 10:00 PM</span></div>
+          <div class="hours-row"><span class="day">Friday – Saturday</span><span>11:00 AM – 11:00 PM</span></div>
+          <div class="hours-row"><span class="day">Sunday</span><span>12:00 PM – 9:00 PM</span></div>
+          <div style="margin-top:1rem; display:flex; align-items:center; gap:.5rem; color:var(--flame); font-size:.88rem; font-weight:500;">
+            <span>🟢</span> We're open now
+          </div>
+        </div>
+      </div>
+
+      <div class="map-wrap reveal">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.982399218637!2d-73.98656732397063!3d40.74844897138943!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire%20State%20Building!5e0!3m2!1sen!2sus!4v1716000000000!5m2!1sen!2sus"
+          allowfullscreen loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Burger Hub Location">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="nav-logo" style="color:var(--white);">
+        <div class="logo-icon">🍔</div>
+        Burger<span style="color:var(--flame);">.</span>Hub
+      </div>
+      <p>Serving bold, honest burgers made with local ingredients and a whole lot of passion. Dine in, take out, or get it delivered.</p>
+      <div class="social-links">
+        <a class="social-link" href="#" aria-label="Instagram">📸</a>
+        <a class="social-link" href="#" aria-label="Facebook">📘</a>
+        <a class="social-link" href="#" aria-label="Twitter/X">🐦</a>
+        <a class="social-link" href="#" aria-label="TikTok">🎵</a>
+        <a class="social-link" href="#" aria-label="YouTube">▶️</a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h5>Menu</h5>
+      <ul>
+        <li><a href="#menu">Classic Burgers</a></li>
+        <li><a href="#menu">Chicken Burgers</a></li>
+        <li><a href="#menu">Veggie Options</a></li>
+        <li><a href="#menu">Sides & Fries</a></li>
+        <li><a href="#menu">Milkshakes</a></li>
+        <li><a href="#menu">Kids Menu</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h5>Company</h5>
+      <ul>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Franchising</a></li>
+        <li><a href="#">Press & Media</a></li>
+        <li><a href="#">Sustainability</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h5>Support</h5>
+      <ul>
+        <li><a href="#contact">Contact Us</a></li>
+        <li><a href="#">FAQs</a></li>
+        <li><a href="#">Allergen Info</a></li>
+        <li><a href="#">Catering</a></li>
+        <li><a href="#">Gift Cards</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 Burger Hub. All rights reserved.</span>
+    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;">
+      <a href="#" style="transition:color .3s;">Privacy Policy</a>
+      <a href="#" style="transition:color .3s;">Terms of Service</a>
+      <a href="#" style="transition:color .3s;">Cookie Settings</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Scroll to top -->
+<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Scroll to top">↑</button>
+
+<!-- Cart toast -->
+<div id="cartToast" style="position:fixed;bottom:5rem;right:1.5rem;background:var(--charcoal);color:var(--white);padding:.9em 1.5em;border-radius:99px;font-size:.88rem;font-weight:500;box-shadow:var(--shadow);z-index:999;transform:translateY(20px);opacity:0;transition:all .4s ease;pointer-events:none;">
+  ✅ Added to cart!
+</div>
+
+<script>
+  /* ── NAV SCROLL ── */
+  const nav = document.getElementById('mainNav');
+  const scrollTopBtn = document.getElementById('scrollTop');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+    scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+  });
+
+  /* ── MOBILE MENU ── */
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  /* ── REVEAL ON SCROLL ── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.transitionDelay = e.target.dataset.delay || '0s';
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    observer.observe(el);
+  });
+
+  /* ── MENU FILTER ── */
+  function filterMenu(btn, cat) {
+    document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.menu-card').forEach(card => {
+      const cats = card.dataset.cat || '';
+      const show = cat === 'all' || cats.includes(cat);
+      card.style.display = show ? 'block' : 'none';
+    });
+  }
+
+  /* ── ADD TO CART ── */
+  function addToCart(btn) {
+    btn.style.transform = 'rotate(360deg) scale(1.3)';
+    setTimeout(() => btn.style.transform = '', 400);
+    const toast = document.getElementById('cartToast');
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0)';
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(20px)';
+    }, 2200);
+  }
+
+  /* ── STAGGER MENU CARDS ── */
+  document.querySelectorAll('.menu-card').forEach((card, i) => {
+    card.style.transitionDelay = `${i * 0.08}s`;
+  });
+</script>
+</body>
+</html>
